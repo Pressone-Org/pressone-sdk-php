@@ -1,0 +1,26 @@
+{
+    "name": "pressone/api",
+    "description": "This package helps you interacts with the pressone backend.",
+    "require": {
+        "guzzlehttp/guzzle": "^7.8"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pressone\\Api\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Pressone\\Api\\Tests\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Afolabi, Tope",
+            "email": "tope@pressone.co"
+        }
+    ]
+}
