@@ -178,7 +178,8 @@ class Telephony {
         } catch (\Exception $e) {
             $message = $e->getMessage();
             return [
-                "message" => $message
+                "message"   => $message,
+                "code"      => "404"
             ];
         }
     }
