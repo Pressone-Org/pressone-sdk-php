@@ -18,28 +18,14 @@ class Telephony {
         $this->accessToken = $key;
     }
 
-    // function getMe() {
-    //     return $this->get("users/me/");
-    // }
-
-    // function getNumbers($page = 1, $count = 100) {
-    //     $data = $this->get("api/third-party/sdk/business/team-member/");
-    //     $response = [];
-    //     foreach ($data as $number) {
-    //         $response[] = [
-    //             "phone_number"  => $number["phone_number"],
-    //             "id"            => $number["id"]
-    //         ];
-    //     }
-
-    //     return $response;
-    // }
-
     function getNumbers($page = 1, $count = 100) {
-        $data = $this->get("api/third-party/sdk/team-member/");
+        $data = $this->get("api/third-party/sdk/number/");
+        print_r($data);
         $responseData = $data["data"] ?? [];
         $receivers = $responseData["receivers"] ?? [];
-        $response = [];
+        $response = [
+            "data"  => []
+        ];
         foreach ($receivers as $receiver) {
             $response["data"][] = [
                 "phone_number"  => $receiver["business_number"]["phone_number"],
@@ -50,7 +36,6 @@ class Telephony {
         }
         $response["total"] = $data["total"] ?? 0;
         $response["size"] = $data["page_size"] ?? 0;
-        $response["total"] = $data[""] ?? 0;
 
         return $response;
     }
@@ -126,12 +111,6 @@ class Telephony {
         $response = $this->get("api/third-party/sdk/contacts/?page_index=$page&page_size=$count");
         return $response;
     }
-
-    // function getCallRecord($id) {
-    //     $data = $this->get("");
-    //     $response = [];
-    //     return $response;
-    // }
 
     function get($url) {
         return $this->makeRequest("GET", $url);

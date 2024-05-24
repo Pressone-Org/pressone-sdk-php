@@ -5,6 +5,11 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use Pressone\Api\Telephony;
 
-$pressone = new Telephony("eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzE2MzAxODU1LCJpYXQiOjE3MTU2OTcwNTUsImp0aSI6IjQ0MmY1MWZjMTdhNzQ4ZDE4ZWE5ZTBmZTE5NzFiMzFlIiwidXNlcl9pZCI6NDUxMSwiaXNfc3RhZmYiOmZhbHNlfQ.W2Cmyb4GyEKhefUXzPhIasaUzDjnXE5XgAyXbmfyVOyplvQ_XKfgS5Tj_30dNn6juAlh4uBZ65xdI34ZT68H_xZ0Qsz3WEBBuBO7syJ1qjXlv4dc2KqFWwC6R9r2vRZZC6nB4CvqBL6MvrnnpxtW0R3N_sz5iGeyPy_a95HakFBW8qK8icxD9QvgLtGUOOLDmT4t728qrm48KEUGkfYqfJUEPBd7vH4sI_HF29wEEMrCio7bv9jImwWf3P0wAxUUnjdTLHh4TSxmNBLXrN_efZL4V-CWS-8YwFQFCi10gDUHJ1G7QHN3i3U6vcswyKJ93JkIxZBfiXNZ8hk6VQvMcg1");
+$pressone = new Telephony("pk_43pAHHF2Wp45cQgfp4zD2rl3eHyoT_c4381679ea57c2e8ca0054b0dcd903c93aaa070486eed52b86b33205fe1b218b299d7605539237f28b645b7d5ea896b25bdef0728e60d6bf81b55a6373240df3");
+$numbers = $pressone->getNumbers();
+assert(isset($numbers["total"]));
+assert(isset($numbers["size"]));
+assert(isset($numbers["data"]));
 
-print_r($pressone->getNumbers());
+// $contacts = $pressone->getContacts();
+// print_r($contacts);
