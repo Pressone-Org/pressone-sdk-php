@@ -18,25 +18,25 @@ class Telephony {
         $this->accessToken = $key;
     }
 
-    function getMe() {
-        return $this->get("users/me/");
-    }
+    // function getMe() {
+    //     return $this->get("users/me/");
+    // }
+
+    // function getNumbers($page = 1, $count = 100) {
+    //     $data = $this->get("api/third-party/sdk/business/team-member/");
+    //     $response = [];
+    //     foreach ($data as $number) {
+    //         $response[] = [
+    //             "phone_number"  => $number["phone_number"],
+    //             "id"            => $number["id"]
+    //         ];
+    //     }
+
+    //     return $response;
+    // }
 
     function getNumbers($page = 1, $count = 100) {
-        $data = $this->get("api/integrations/business/team-member/");
-        $response = [];
-        foreach ($data as $number) {
-            $response[] = [
-                "phone_number"  => $number["phone_number"],
-                "id"            => $number["id"]
-            ];
-        }
-
-        return $response;
-    }
-
-    function getBusinessNumber() {
-        $data = $this->get("api/integrations/business/team-member/");
+        $data = $this->get("api/third-party/sdk/team-member/");
         $responseData = $data["data"] ?? [];
         $receivers = $responseData["receivers"] ?? [];
         $response = [];
@@ -93,7 +93,7 @@ class Telephony {
             ]
         ];
 
-        $data = $this->post("api/integrations/business/team-member/", $data);
+        $data = $this->post("api/third-party/sdk/team-member/", $data);
 
         $receivers = $data["receivers"] ?? [];
 
@@ -110,24 +110,22 @@ class Telephony {
         return $response;
     }
 
-
     function getCallCredentials($receiver_id, $public_key) {
-        return $this->post("telephony/crm/receiver-line/", [
+        return $this->post("api/third-party/sdk/receiver-line/", [
             "public_key"    => $public_key,
             "receiver"      => $receiver_id
         ]);
     }
 
-    // function getCallRecords($page = 1, $count = 100) {
-    //     $data = $this->get("");
-    //     $response = [];
+    function getCallRecords($page = 1, $count = 100) {
+        $response = $this->get("api/third-party/sdk/contacts/?page_index=$page&page_size=$count");
+        return $response;
+    }
 
-    //     foreach ($data as $number) {
-            
-    //     }
-
-    //     return $response;
-    // }
+    function getContacts($page = 1, $count = 100) {
+        $response = $this->get("api/third-party/sdk/contacts/?page_index=$page&page_size=$count");
+        return $response;
+    }
 
     // function getCallRecord($id) {
     //     $data = $this->get("");
