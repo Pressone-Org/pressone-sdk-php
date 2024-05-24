@@ -1,14 +1,6 @@
-
-title: Docs to share with ARM for their server-side
-created at: Wed Apr 24 2024 15:59:10 GMT+0000 (Coordinated Universal Time)
-updated at: Fri May 24 2024 16:38:03 GMT+0000 (Coordinated Universal Time)
----
-
-# Docs to share with ARM for their server-side
-
 # PressOne PHP SDK
 
-If you are using any php library, you can install PressOne as part of your dependencies using composer
+If you are using any Php library, you can install PressOne as part of your dependencies using composer
 
 Run:
 
@@ -30,27 +22,48 @@ Then use it in your project as thus
       }
     }
 
-Now you have access to call our methods.
+Now you have access to call the follow methods.
 
     // returns all the numbers you have with PressOne
-    $telephone->getNumbers();
+    $numbers = $telephone->getNumbers();
+    // $numbers: [
+    //   {
+    //     phone_number: "02012345678",
+    //     status: "verified",
+    //     label: "My Number"
+    //     number_id: 2693,
+    //   },
+    //   ...
+    // ]
 
     // assign a customer to a number
     $data = [
-      "email"         => "user@pressone.co",
-      "phone_number"  => "08123456789",
+      "email"         => "user@pressone.co", // customer's email
+      "phone_number"  => "+23408123456789", // customer's phone number
+      "number_ids"    => [234, 567], // number_id from $telephone->getNumbers() result
       // optional params,
       "first_name"    => "John",
       "last_name"     => "Doe",
       "role"          => "owner",
     ];
-
     $telephone->assignNumber($data);
+
+    // returns the list of assigned customers to number
+    $members = $telephone->getMembers();
+    // $members: [
+    //   {
+    //     phone_number: "+23408123456789",
+    //     full_name: "John Doe",
+    //     receiver_id: 234
+    //     receiver_code: 100,
+    //   },
+    //   ...
+    // ]
 
     // get your call credential
     $telephone->getCallCredentials($public_key, $number_id);
-    // get $public_key from frontend client
-    // get $number_id from the response in $telephone->getNumbers()
+    // $public_key would be sent from frontend client
+    // $number_id is from the response in $telephone->getNumbers()
 
     // returns call records
     $telephone->getCallRecords();

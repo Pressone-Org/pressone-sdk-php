@@ -6,8 +6,7 @@ use GuzzleHttp\Psr7\Request;
 
 class Telephony {
 
-    // private $baseUrl = "https://pressone-test-1a2875e4-023ea85a610a.herokuapp.com/api/"; 
-    private $baseUrl = "https://api.pressone.co/api/";
+    private $baseUrl = "https://api.pressone.co/";
 
     private $accessToken = null;
 
@@ -20,20 +19,43 @@ class Telephony {
 
     function getNumbers($page = 1, $count = 100) {
         $data = $this->get("api/third-party/sdk/number/");
-        print_r($data);
+        
+        $response = [];
+
+        foreach ($data as $number) {
+            // print_r($businessData);
+            $response[] = [
+                "phone_number"  => $number["phone_number"],
+                "status"        => $number["verification_status"],
+                "label"         => $number["label"],
+                "number_id"     => $number["id"],
+            ];
+        }
+
+        return $response;
+    }
+
+    function getMembers($page = 1, $count = 100) {
+        $data = $this->get("api/third-party/sdk/team-member/");
+        // 
         $responseData = $data["data"] ?? [];
-        $receivers = $responseData["receivers"] ?? [];
+        
         $response = [
             "data"  => []
         ];
-        foreach ($receivers as $receiver) {
-            $response["data"][] = [
-                "phone_number"  => $receiver["business_number"]["phone_number"],
-                "label"         => $receiver["business_number"]["label"],
-                "receiver_id"   => $receiver["id"],
-                "receiver_code" => $receiver["extension_code"],
-            ];
+
+        foreach ($responseData as $businessData) {
+            $receivers = $businessData["receivers"] ?? [];
+            foreach ($receivers as $receiver) {
+                $response["data"][] = [
+                    "phone_number"  => $businessData["mobile"],
+                    "full_name"     => $businessData["first_name"] . " " . $businessData["last_name"],
+                    "receiver_id"   => $receiver["business_number"],
+                    "receiver_code" => $receiver["extension_code"],
+                ];
+            }
         }
+        
         $response["total"] = $data["total"] ?? 0;
         $response["size"] = $data["page_size"] ?? 0;
 
@@ -42,10 +64,17 @@ class Telephony {
 
     function assignNumber(array $data) {
 
-        if (!isset($data["email"]) || !isset($data["phone_number"])) {
+        if (!isset($data["email"]) || !isset($data["phone_number"]) || !isset($data["number_ids"])) {
             return [
                 "message"   => "both email and phone_number are required.",
                 "code"      => "404"
+            ];
+        }
+
+        if ( !is_array($data["number_ids"])) {
+            return [
+                "message"   => "number_ids must be an array of int.",
+                "code"      => "401"
             ];
         }
 
@@ -71,9 +100,7 @@ class Telephony {
                 "can_download_call_recordings"  => null,
                 "can_view_performance_report"   => null,
                 "can_view_activity_report"      => null,
-                "business_numbers"  => [
-                    1
-                ],
+                "business_numbers"  => $data["number_ids"],
                 "role"              => $data["role"] ?? "owner",
             ]
         ];
@@ -85,9 +112,9 @@ class Telephony {
         $response = [];
         foreach ($receivers as $receiver) {
             $response[] = [
-                "phone_number"  => $receiver["business_number"]["phone_number"],
-                "label"         => $receiver["business_number"]["label"],
-                "receiver_id"   => $receiver["id"],
+                "phone_number"  => $data["mobile"],
+                "full_name"     => $data["first_name"] . " " . $data["last_name"],
+                "receiver_id"   => $receiver["business_number"] ?? $receiver["id"],
                 "receiver_code" => $receiver["extension_code"],
             ];
         }
@@ -121,7 +148,10 @@ class Telephony {
     }
 
     function makeRequest($method, $url, $body = null) {
-        $headers = ['Authorization' => 'Bearer ' . $this->accessToken];
+        $headers = [
+            'Authorization' => 'Bearer ' . $this->accessToken,
+            'Pressone-X-Api-Key' => $this->accessToken,
+        ];
 
         $client = new Client([
             'base_uri'  => $this->baseUrl,
@@ -141,8 +171,8 @@ class Telephony {
             $response = $client->request($method, $url, $req);
 
             $statusCode = $response->getStatusCode();
-            $body = $response->getBody();
-
+            $body = json_decode($response->getBody(),true);
+      
             if ( $statusCode == 401 ) {
                 return $body;
             }
