@@ -19,10 +19,26 @@ Then use it in your project as thus
 
       function __construct() {
         $this->telephone = new Telephony(PRESSONE_SECRET_KEY);
+        // for test mode pass "true" as a second parameter to the constructor
+        // $this->telephone = new Telephony(PRESSONE_SECRET_KEY, true);
       }
     }
 
 Now you have access to call the follow methods.
+
+    // returns all available numbers you can purchase on PressOne
+    $numbers = $telephone->availableNumbers();
+    // $numbers: {
+    //  data: [
+    //    {
+    //      phone_number: "02012345678",
+    //      country_code: "NG",
+    //    },
+    //    ...
+    //  ],
+    //  total: 432,
+    //  size: 10
+    // }
 
     // returns all the numbers you have with PressOne
     $numbers = $telephone->getNumbers();
@@ -36,7 +52,7 @@ Now you have access to call the follow methods.
     //   ...
     // ]
 
-    // assign a customer to a number
+    // You can create a user and assign the user to a number using this method.
     $data = [
       "email"         => "user@pressone.co", // customer's email
       "phone_number"  => "+23408123456789", // customer's phone number
@@ -56,14 +72,20 @@ Now you have access to call the follow methods.
     //     full_name: "John Doe",
     //     receiver_id: 234
     //     receiver_code: 100,
+    //     user_id: 2
     //   },
     //   ...
     // ]
 
     // get your call credential
-    $telephone->getCallCredentials($public_key, $number_id);
-    // $public_key would be sent from frontend client
-    // $number_id is from the response in $telephone->getNumbers()
+    $token = $telephone->getCredentials($user_id);
+    // $user_id is from the response in $telephone->assignNumber();
+    // 
+    // $token: {
+    //    refresh: "eyJ283w...",
+    //    access: "eyJ283w...",
+    //    expiry: 7200
+    // }
 
     // returns call records
     $telephone->getCallRecords();
